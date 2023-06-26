@@ -41,7 +41,7 @@
         @enderror
     </div>
     <div class="form-group">
-        <label for="planning_date">Дата:</label>
+        <label for="planning_date">Дата проведение:</label>
         <input type="date" id="planning_date" name="planning_date" class="form-control" min="{{ date('Y-m-d') }}">
     </div>
     <div class="form-group">

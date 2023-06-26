@@ -29,3 +29,5 @@ Route::resource('methods', MethodController::class);
 //Route::get('card/{id}/lesson/', [LessonController::class, 'create'])->name('lesson.create');
 //Route::resource('card', CardController::class);
 Route::get('card/{id}', [CardController::class, 'index'])->name('card.index');
+Route::get('lesson/{id}/generate', [LessonController::class, 'generateDocument'])->name('lesson.generate');
+//Route::delete('card/{card}/lesson/{id}', [LessonController::class, 'desctroy'])->name('lesson.destroy');

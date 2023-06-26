@@ -9,9 +9,11 @@ class Lesson extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['topic', 'goal', 'subject_name', 'planning_date', 'evaluation_criteria', 'language_goals', 'instilling_values', 'intersubject_communications', 'prior_knowledge',
+    protected $fillable = [
+        'topic', 'goal', 'subject_name', 'planning_date', 'evaluation_criteria', 'language_goals', 'instilling_values', 'intersubject_communications', 'prior_knowledge',
         'start_lesson_comments1', 'start_lesson_resource1', 'start_lesson_comments2', 'start_lesson_resource2', 'start_lesson_comments3', 'start_lesson_resource3',
-        'reflection', 'card_id', 'user_id'];
+        'reflection', 'card_id', 'user_id'
+    ];
 
     /**
      * Get the card that owns the Lesson
