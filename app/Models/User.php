@@ -51,4 +51,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Lesson::class);
     }
+
+    /**
+     * Get all of the methods for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function methods()
+    {
+        return $this->hasMany(Method::class);
+    }
+
+    /**
+     * Get all of the feedback for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function feedback()
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }

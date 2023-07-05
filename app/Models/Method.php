@@ -18,4 +18,14 @@ class Method extends Model
     {
         return $this->belongsToMany(Card::class, 'card_method');
     }
+
+    /**
+     * Get the user that owns the Method
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

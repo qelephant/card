@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Card;
+use App\Models\Feedback;
+use App\Models\Method;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CardController extends Controller
@@ -14,73 +17,16 @@ class CardController extends Controller
      */
     public function index()
     {
-        $card = Card::with('strategy', 'principles' , 'questions', 'feedback', 'method', 'lessons')->find(request()->route('id'));
-        return view('cards.index', compact('card'));
-    }
+        $card = Card::with('strategy', 'principles' , 'questions', 'method', 'feedback', 'lessons')->findOrFail(request()->route('id'));
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        $methods = $card['method'];
+        $personalMethods = Method::where('user_id', 1)->get();
+        $methods = $methods->concat($personalMethods);
+        $feedback = $card['feedback'];
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $personalFeedback = Feedback::where('user_id', 1)->get();
+        $feedback = $feedback->concat($personalFeedback);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Card $card)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Card $card)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Card $card)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Card $card)
-    {
-        //
+        return view('cards.index', compact('card', 'methods', 'feedback'));
     }
 }

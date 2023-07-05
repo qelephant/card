@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LessonStoreRequest;
 use App\Models\Card;
+use App\Models\Feedback;
 use App\Models\Lesson;
+use App\Models\Method;
 use Illuminate\Http\Request;
 use App\Services\WordGenerator;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\Element\Row;
 use PhpOffice\PhpWord\Element\Cell;
@@ -30,10 +33,26 @@ class LessonController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $card = Card::with('strategy', 'principles', 'questions', 'feedback', 'method')->find(request()->route('card'));
-        return view('lessons.create', compact('card'));
+        if ($request->isMethod('post')) {
+        $data = $request->all();
+        $card = Card::with('strategy', 'principles', 'questions')->find(request()->route('card'));
+
+        $models = Method::whereIn('id', $data['selectedMethod'])->get();
+        // Сортировка моделей в соответствии с порядком ключей
+        $sortedModels = collect($data['selectedMethod'])->map(function ($key) use ($models) {
+            return $models->where('id', $key);
+        })->flatten();
+
+        $feedback = Feedback::whereIn('id', $data['selectedFeedback'])->get();
+        // Сортировка моделей в соответствии с порядком ключей
+        $sortedFeedback = collect($data['selectedFeedback'])->map(function ($key) use ($feedback) {
+            return $feedback->where('id', $key);
+        })->flatten();
+
+        return view('lessons.create', compact('card', 'sortedModels', 'sortedFeedback'));
+        }
     }
 
     /**
@@ -44,6 +63,7 @@ class LessonController extends Controller
      */
     public function store(LessonStoreRequest $request)
     {
+
         $lesson = new Lesson();
         $lesson->fill($request->all());
         $lesson->language_goals = $request->input('Языковые_цели');
@@ -74,9 +94,9 @@ class LessonController extends Controller
      * @param  \App\Models\Lesson  $lesson
      * @return \Illuminate\Http\Response
      */
-    public function edit(Lesson $lesson)
+    public function edit(Card $card, Lesson $lesson)
     {
-        //
+        return view('lessons.edit', compact('card', 'lesson'));
     }
 
     /**
@@ -117,17 +137,17 @@ class LessonController extends Controller
             'planning_date' => $id->planning_date,
             'goal' => $id->goal,
             'evaluation_criteria' => $id->evaluation_criteria,
-            'language_goals' => $id->language_goals !== null ? $id->language_goals : '',
-            'instilling_values' => $id->instilling_values !== null ? $id->instilling_values : '',
-            'intersubject_communications' => $id->intersubject_communications !== null ? $id->intersubject_communications : '',
-            'prior_knowledge' => $id->prior_knowledge !== null ? $id->prior_knowledge : '',
-            'start_lesson_comments1' => $id->start_lesson_comments1 !== null ? $id->start_lesson_comments1 : '',
-            'start_lesson_resource1' => $id->start_lesson_resource1 !== null ? $id->start_lesson_resource1 : '',
-            'start_lesson_comments2' => $id->start_lesson_comments2 !== null ? $id->start_lesson_comments2 : '',
-            'start_lesson_resource2' => $id->start_lesson_resource2 !== null ? $id->start_lesson_resource2 : '',
-            'start_lesson_comments3' => $id->start_lesson_comments3 !== null ? $id->start_lesson_comments3 : '',
-            'start_lesson_resource3' => $id->start_lesson_resource3 !== null ? $id->start_lesson_resource3 : '',
-            'reflection' => $id->reflection !== null ? $id->reflection : '',
+            'language_goals' => $id->language_goals ?? '',
+            'instilling_values' => $id->instilling_values ?? '',
+            'intersubject_communications' => $id->intersubject_communications ?? '',
+            'prior_knowledge' => $id->prior_knowledge ?? '',
+            'start_lesson_comments1' => $id->start_lesson_comments1 ?? '',
+            'start_lesson_resource1' => $id->start_lesson_resource1 ?? '',
+            'start_lesson_comments2' => $id->start_lesson_comments2 ?? '',
+            'start_lesson_resource2' => $id->start_lesson_resource2 ?? '',
+            'start_lesson_comments3' => $id->start_lesson_comments3 ?? '',
+            'start_lesson_resource3' => $id->start_lesson_resource3 ?? '',
+            'reflection' => $id->reflection ?? '',
         ];
 
         // adding methods array to data
@@ -160,6 +180,5 @@ class LessonController extends Controller
         $generator->generate($data, $outputPath);
 
         return response()->download($outputPath)->deleteFileAfterSend(true);
-
     }
 }

@@ -41,207 +41,168 @@
                 @else
                     <p>Нет созданных уроков</p>
                 @endif
-
-                <a href="{{ route('lesson.create', ['card' => $card->id]) }}" class="btn btn-primary">Создать план урока</a>
+                <form action="{{ route('lesson.create', ['card' => $card]) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">Создать план урока</button>
             </div>
         </div>
         <div class="d-flex justify-content-between">
-            <div class="table-responsive">
-                <table class="table table-bordered mb-0" style="color: black">
-                    <thead>
-                        <tr>
-                            <th colspan="5">
-                                <div class=" text-center">
-                                    <p>{{ $card['strategy']['name'] }} {{ $card['strategy']['description'] }}</p>
-                                    <p>Урок {{ $card->id }}: {{ $card->name }}</p>
+            <table class="table" style="color: black">
+                <thead>
+                    <tr>
+                        <th colspan="5">
+                            <div class=" text-center">
+                                <p>{{ $card['strategy']['name'] }} {{ $card['strategy']['description'] }}</p>
+                                <p>Урок {{ $card->id }}: {{ $card->name }}</p>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr class="text-center">
+                        <th scope="col">#</th>
+                        <th scope="col">Каковы ключевые принципы реализации стратегии?</th>
+                        <th scope="col">Какой метод необходимо применить?</th>
+                        <th scope="col">В какой форме предоставить обратную связь?</th>
+                        <th scope="col">Полезные вопросы на уроке</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach ($card['principles'] as $key => $principle)
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
+                                    name="checkbox{{ $key }}" checked>
+                            </div>
+                        </td>
+                        <td class="col-3">
+                            <p>{{ $principle->name }}</p>
+                        </td>
+                        <td class="col-3">
+                            <div class="input-group">
+                                <select class="custom-select" id="mySelect{{ $key + 1 }}" name="selectedMethod[]">
+                                    <option value="{{ $methods[$key]['id'] }}">
+                                        {{ $methods[$key]['name'] }}
+                                    </option>
+                                    <option value="{{ $methods[count($methods) - 1]['id'] }}">
+                                        {{ $methods[count($methods) - 1]['name'] }}</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button"
+                                        onclick="openModal({{ $key + 1 }})">Подробнее</button>
                                 </div>
-                            </th>
+                            </div>
+                        </td>
+                        <td class="col-3">
+                            <div class="input-group">
+                                <select class="custom-select" id="myFeedback{{ $key + 1 }}" name="selectedFeedback[]">
+                                    <option value="{{ $feedback[$key]['id'] }}">
+                                        {{ $feedback[$key]['name'] }}
+                                    </option>
+                                    <option value="{{ $feedback[count($feedback) - 1]['id'] }}">
+                                        {{ $feedback[count($feedback) - 1]['name'] }}</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button"
+                                        onclick="openFeedbackModal({{ $key + 1 }})">Подробнее</button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-3">
+                            <p>{{ $card['questions'][$key]['name'] }}</p>
+                        </td>
                         </tr>
-                        <tr class="text-center">
-                            <th>Каковы ключевые принципы реализации стратегии?</th>
-                            <th>Какой метод необходимо применить?</th>
-                            <th>В какой форме предоставить обратную связь?</th>
-                            <th colspan="2">Полезные вопросы на уроке</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($card['principles'] as $key => $principle)
-                            <tr class="text-center">
-                                <td>
-                                    <a class="list-group-item list-group-item-action">{{ $principle->name }}</a>
-                                </td>
-                                <td>
-                                    @if ($card['method'][$key]['id'] == '1')
-                                        <p></p>
-                                    @else
-                                        <a href="#" class="list-group-item list-group-item-action" data-toggle="modal"
-                                            data-target="#exampleModalCenter{{ $card['method'][$key]['name'] }}{{ $card['method'][$key]['id'] }}">{{ $card['method'][$key]['name'] }}</a>
-                                        <div class="modal fade"
-                                            id="exampleModalCenter{{ $card['method'][$key]['name'] }}{{ $card['method'][$key]['id'] }}"
-                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLongTitle">Title</h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p><b>Название</b> {{ $card['method'][$key]['name'] }}</p>
-                                                        <p><b>Цель</b> {{ $card['method'][$key]['target'] }}
-                                                        <p><b>Описание</b> {{ $card['method'][$key]['description'] }}
-                                                        <p><b>Необходимые ресурсы</b>
-                                                            {{ $card['method'][$key]['required_resources'] }}
-                                                        <p><b>Рекомендуемый этап урока</b>
-                                                            {{ $card['method'][$key]['recommended_stage'] }}
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </div>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="#" class="list-group-item list-group-item-action" data-toggle="modal"
-                                        data-target="#exampleModalCenter{{ $card['feedback'][$key]['name'] }}{{ $card['feedback'][$key]['id'] }}">{{ $card['feedback'][$key]['name'] }}</a>
-                                    <!-- Modal -->
-                                    <div class="modal fade"
-                                        id="exampleModalCenter{{ $card['feedback'][$key]['name'] }}{{ $card['feedback'][$key]['id'] }}"
-                                        tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLongTitle">Title</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p><b>Название</b> {{ $card['feedback'][$key]['name'] }}</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td colspan="2">
-                                    <a
-                                        class="list-group-item list-group-item-action">{{ $card['questions'][$key]['name'] }}</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                    @endforeach
+                </tbody>
+                </form>
+            </table>
+            <div class="modal fade" id="myModalMethod" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Полная информация</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="selectedOption"></p>
+                            <p id="selectedTarget"></p>
+                            <p id="selectedDescription"></p>
+                            <p id="selectedRequiredResources"></p>
+                            <p id="selectedRecommendedStage"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {{-- <div class="card m-3">
-                        <div class="card-header">
-                            Каковы ключевые принципы реализации стратегии?
+
+            <div class="modal fade" id="myModalFeedback" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Полная информация</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                @foreach ($card['principles'] as $principle)
-                                    <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#exampleModalCenter">{{$principle->name}}</a>
-                                @endforeach
-                            </div>
+                        <div class="modal-body">
+                            <p id="selectedFeedOption"></p>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="card m-3" >
-                        <div class="card-header">
-                            Какой метод необходимо применить?
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                @foreach ($card['method'] as $method)
-                                    @if ($method->id == '1')
-                                        <a class="list-group-item list-group-item-action" ><p style="opacity: 0.0"></p></a>
-                                    @else
-                                        <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#exampleModalCenter{{$method->id}}">{{$method->name}}</a>
-                                    @endif
-                                    <div class="modal fade" id="exampleModalCenter{{$method->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Title</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{$method->name}}
-                                                {{$method->target}}
-                                                {{$method->required_resources}}
-                                                {{$method->recomended_stage}}
-                                            </div>
-                                            <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
-                                            </div>
-                                        </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="card m-3" >
-                        <div class="card-header">
-                            В какой форме предоставить обратную связь?
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                @foreach ($card['feedback'] as $feedback)
-                                    <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#exampleModalCenter{{$feedback->id}}">{{$feedback->name}}</a>
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="exampleModalCenter{{$feedback->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Title</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{$feedback->name}}
-                                            </div>
-                                            <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
-                                            </div>
-                                        </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card m-3" >
-                        <div class="card-header">
-                            Полезные вопросы на уроке
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                @foreach ($card['questions'] as $question)
-                                    <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#exampleModalCenter">{{$question->name}}</a>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div> --}}
         </div>
-
     </div>
+    </div>
+@endsection
+
+@section('script')
+    <script>
+        var methodsData = @json($methods);
+        var feedbackData = @json($feedback);
+
+        function openModal(key) {
+
+            // Получение элементов из HTML
+            var select = document.getElementById("mySelect" + key);
+            var selectedOption = document.getElementById("selectedOption");
+            var selectedTarget = document.getElementById("selectedTarget");
+            var selectedDescription = document.getElementById("selectedDescription");
+            var selectedRequiredResources = document.getElementById("selectedRequiredResources");
+            var selectedRecommendedStage = document.getElementById("selectedRecommendedStage");
+            // Открытие модального окна
+
+            var selectedElement = methodsData.find(function(element) {
+                return element.id == select.value;
+            });
+            console.log(select);
+            // Получение выбранного значения
+            selectedOption.textContent = "Выбранная опция: " + selectedElement.name; // Вывод выбранной опции
+            selectedTarget.textContent = "Цель: " + selectedElement.target; // Вывод выбранной опции
+            selectedDescription.textContent = "Описание: " + selectedElement.description; // Вывод выбранной опции
+            selectedRequiredResources.textContent = "Необходимые ресурсы: " + selectedElement.required_resources; // Вывод выбранной опции
+            selectedRecommendedStage.textContent = "Рекомендуемый этап урока: " + selectedElement.recommended_stage; // Вывод выбранной опции
+
+            $("#myModalMethod").modal("show"); // Отображение модального окна с помощью Bootstrap
+        }
+
+        function openFeedbackModal(key) {
+            // Получение элементов из HTML
+            var select = document.getElementById("myFeedback" + key);
+            var selectedOption = document.getElementById("selectedFeedOption");
+
+            // Открытие модального окна
+            var selectedFeedElement = feedbackData.find(function(element) {
+                return element.id == select.value;
+            });
+
+            selectedOption.textContent = "Выбранная опция: " + selectedFeedElement.name; // Вывод выбранной опции
+
+            $("#myModalFeedback").modal("show"); // Отображение модального окна с помощью Bootstrap
+        }
+    </script>
+
 @endsection

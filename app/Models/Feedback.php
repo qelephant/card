@@ -18,4 +18,14 @@ class Feedback extends Model
     {
         return $this->belongsToMany(Card::class);
     }
+
+    /**
+     * Get the user that owns the Feedback
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
