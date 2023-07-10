@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid mt-3">
+    <div class="container-fluid mt-3 ">
         <div class="card">
             <div class="card-header">
                 {{ $card->name }}
@@ -47,7 +47,7 @@
             </div>
         </div>
         <div class="d-flex justify-content-between">
-            <table class="table" style="color: black">
+            <table class="table">
                 <thead>
                     <tr>
                         <th colspan="5">
@@ -66,7 +66,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     @foreach ($card['principles'] as $key => $principle)
                         <td>
                             <div class="form-check form-switch">
@@ -117,7 +116,7 @@
             </table>
             <div class="modal fade" id="myModalMethod" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Полная информация</h5>
@@ -138,16 +137,17 @@
 
             <div class="modal fade" id="myModalFeedback" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Полная информация</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Форма обратной связи</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
                             <p id="selectedFeedOption"></p>
+                            <p id="selectedFeedDescription"></p>
                         </div>
                     </div>
                 </div>
@@ -193,13 +193,14 @@
             // Получение элементов из HTML
             var select = document.getElementById("myFeedback" + key);
             var selectedOption = document.getElementById("selectedFeedOption");
-
+            var selectedFeedDescription = document.getElementById("selectedFeedDescription");
             // Открытие модального окна
             var selectedFeedElement = feedbackData.find(function(element) {
                 return element.id == select.value;
             });
-
-            selectedOption.textContent = "Выбранная опция: " + selectedFeedElement.name; // Вывод выбранной опции
+            console.log(selectedFeedElement);
+            selectedOption.textContent = "Название: " + selectedFeedElement.name; // Вывод выбранной опции
+            selectedFeedDescription.innerHTML = selectedFeedElement.description; // Вывод выбранной опции
 
             $("#myModalFeedback").modal("show"); // Отображение модального окна с помощью Bootstrap
         }

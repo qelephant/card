@@ -10,7 +10,7 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid mt-3">
+    <div class="container mt-3">
         <h2>Создание урока</h2>
 
         @if (count($errors) > 0)
@@ -71,7 +71,7 @@
             <div class="row">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered mb-0">
+                        <table class="table mb-0">
                             <tbody>
                                 <tr>
                                     <th colspan="3" style="text-align: center">
@@ -91,12 +91,12 @@
                                             <p><b>Метод: </b> {{ $sortedModels[$key]['name'] }}</p>
                                             <p><b>Форма обратной связи:</b> {{ $sortedFeedback[$key]['name'] }}</p>
                                             <textarea data-user="" name="start_lesson_comments{{ $key + 1 }}" class="form-control"
-                                                placeholder="Введите комментарий" style="height: 49px;"></textarea>
+                                                placeholder="Введите комментарий" rows="3"></textarea>
                                             <br><br>
                                             <p><b>Полезные вопросы на уроке:</b> {{ $card['questions'][$key]['name'] }}</p>
                                         </td>
                                         <td>
-                                            <textarea data-user="" name="start_lesson_resource{{ $key + 1 }}" class="form-control" rows="10"
+                                            <textarea data-user="" name="start_lesson_resource{{ $key + 1 }}" class="form-control" rows="11"
                                                 cols="70" placeholder="Введите ресурсы"></textarea>
                                         </td>
                                     </tr>
