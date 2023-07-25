@@ -18,4 +18,14 @@ class Question extends Model
     {
         return $this->belongsTo(Card::class);
     }
+
+     /**
+     * Get the card that owns the Question
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function lesson()
+    {
+        return $this->belongsToMany(Lesson::class);
+    }
 }

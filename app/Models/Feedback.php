@@ -28,4 +28,14 @@ class Feedback extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get all of the lessons for the Feedback
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class);
+    }
 }

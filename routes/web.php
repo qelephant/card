@@ -24,10 +24,10 @@ Route::get('/', function () {
     return view('welcome', compact('strategies'));
 });
 
-Route::resource('/card/{card}/lesson', LessonController::class)->except('create');
 Route::match(['post', 'get'], '/card/{card}/lesson/create', [LessonController::class, 'create'])->name('lesson.create');
+Route::resource('/card/{card}/lesson', LessonController::class)->except('create');
 
-Route::post('/card/{card}/lesson/precreate', [LessonController::class, 'preCreate'])->name('lesson.pre.create');
+//Route::post('/card/{card}/lesson/precreate', [LessonController::class, 'preCreate'])->name('lesson.pre.create');
 
 Route::resource('strategies', StrategyController::class);
 Route::resource('methods', MethodController::class);
@@ -36,4 +36,5 @@ Route::resource('methods', MethodController::class);
 //Route::resource('card', CardController::class);
 Route::get('card/{id}', [CardController::class, 'index'])->name('card.index');
 Route::get('lesson/{id}/generate', [LessonController::class, 'generateDocument'])->name('lesson.generate');
+Route::post('lesson/upload', [LessonController::class, 'upload'])->name('lesson.upload');
 //Route::delete('card/{card}/lesson/{id}', [LessonController::class, 'desctroy'])->name('lesson.destroy');

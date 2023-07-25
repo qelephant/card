@@ -10,9 +10,9 @@ class Lesson extends Model
     use HasFactory;
 
     protected $fillable = [
-        'topic', 'goal', 'subject_name', 'planning_date', 'evaluation_criteria', 'language_goals', 'instilling_values', 'intersubject_communications', 'prior_knowledge',
-        'start_lesson_comments1', 'start_lesson_resource1', 'start_lesson_comments2', 'start_lesson_resource2', 'start_lesson_comments3', 'start_lesson_resource3',
-        'reflection', 'card_id', 'user_id'
+        'topic', 'goal', 'quarter', 'subject', 'class', 'liter', 'planning_date', 'evaluation_criteria', 'language_goals', 'instilling_values', 'intersubject_communications', 'prior_knowledge',
+        'first_lesson_editor', 'first_lesson_resource', 'lesson_editor0', 'lesson_resource0', 'lesson_editor1', 'lesson_resource1', 'lesson_editor2', 'lesson_resource2', 'lesson_editor3', 'lesson_resource3', 'main_lesson_editor', 'main_lesson_resource',
+        'last_lesson_editor', 'last_lesson_resource', 'reflection', 'card_id', 'user_id'
     ];
 
     /**
@@ -33,5 +33,46 @@ class Lesson extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+     /**
+     * Get all of the principle for the Card
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function principles()
+    {
+        return $this->belongsToMany(Principle::class);
+    }
+
+    /**
+     * Get the questions that owns the Card
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class);
+    }
+
+
+    /**
+     * Get all of the feedback for the Lesson
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function feedback()
+    {
+        return $this->belongsToMany(Feedback::class);
+    }
+
+    /**
+     * Get all of the methods for the Lesson
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function methods()
+    {
+        return $this->belongsToMany(Method::class);
     }
 }
